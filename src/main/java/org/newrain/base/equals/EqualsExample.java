@@ -1,6 +1,7 @@
 package org.newrain.base.equals;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author newRain
@@ -15,65 +16,77 @@ public class EqualsExample {
         this.x = x;
         this.y = y;
     }
-/*
+
     @Override
-    public int hashCode(){
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + x;
         result = prime * result + y;
         return result;
     }
+
     @Override
-    public boolean equals(Object obj){
-        if(this == obj){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if(obj == null){
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()){
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        final RectObject other = (RectObject)obj;
-        if(x != other.x){
+        final EqualsExample other = (EqualsExample) obj;
+        if (x != other.x) {
             return false;
         }
-        if(y != other.y){
+        if (y != other.y) {
             return false;
         }
         return true;
-    }*/
+    }
 
     public static void main(String[] args) {
-        //重写equals and hashcode方法
-      /*  HashSet<RectObject> set = new HashSet<>();
-        RectObject r1 = new RectObject(3,3);
-        RectObject r2 = new RectObject(5,5);
-        RectObject r3 = new RectObject(3,3);
-        set.add(r1);
-        set.add(r2);
-        set.add(r3);
-        set.add(r1);
-        //size = 2
-        System.out.println("size:" + set.size());*/
+        test1();
+        test2();
+    }
 
-        //将对象的属性值参与了hashCode的运算中，在进行删除的时候，就不能对其属性值进行修改
-        //否则会造成内存泄漏
-        HashSet<EqualsExample> set = new HashSet<>();
+    /**
+     * hashCode、equals方法测试
+     */
+    public static void test1() {
+        Set<EqualsExample> set = new HashSet<>();
         EqualsExample r1 = new EqualsExample(3, 3);
         EqualsExample r2 = new EqualsExample(5, 5);
         EqualsExample r3 = new EqualsExample(3, 3);
         set.add(r1);
         set.add(r2);
         set.add(r3);
-        System.out.println(r3.hashCode());
+        set.add(r1);
+        //使用默认的hashCode、equals方法 size为3
+        //使用重写的hashCode、equals方法 size为2
+        System.out.println("size:" + set.size());
+    }
+
+    /**
+     * 属性参与计算时，更改属性值引发的问题
+     */
+    public static void test2() {
+        //将对象的属性值参与了hashCode的运算中，在进行删除的时候，就不能对其属性值进行修改
+        //否则会造成内存泄漏
+        Set<EqualsExample> set = new HashSet<>();
+        EqualsExample r1 = new EqualsExample(3, 3);
+        EqualsExample r2 = new EqualsExample(5, 5);
+        EqualsExample r3 = new EqualsExample(3, 3);
+        set.add(r1);
+        set.add(r2);
+        set.add(r3);
+        System.out.println(r3.hashCode());//r3 修改前hashcode
         r3.y = 7;
         System.out.println(r3.hashCode());
         System.out.println("删除前的大小size:" + set.size());
         set.remove(r3);
         System.out.println("删除后的大小size:" + set.size());
-
-
     }
 }
