@@ -9,6 +9,7 @@ public class EvenNumber {
         System.out.println(test1(-1));
         System.out.println(test2(-1));
         System.out.println(remainder(2, -1));
+        System.out.println(2-2/-1*-1); //0
     }
 
     /**
@@ -34,11 +35,13 @@ public class EvenNumber {
     /**
      * 模拟取余计算
      *
-     * @param dividend 被除数
-     * @param divisor  除数
+     * @param dividend 被除数 2
+     * @param divisor  除数 -1
      * @return
      */
     public static int remainder(int dividend, int divisor) {
+        //被除数-被除数/除数*除数
+        //2-2/-1*-1
         return dividend - dividend / divisor * divisor;
     }
 }
