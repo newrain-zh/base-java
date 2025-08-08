@@ -1,7 +1,7 @@
 package org.newrain.base.question;
 
 /**
- * Created by zzqno on 2017-5-8.
+ * 值传递规则
  */
 public class Value {
 
