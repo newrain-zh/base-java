@@ -4,7 +4,7 @@ import org.newrain.base.copy.entity.Address;
 import org.newrain.base.copy.entity.User;
 
 /**
- * Created by zzqno on 2017-3-6.
+ * Created by newrain on 2017-3-6.
  */
 public class CopyBySerializableExample {
     public static void main(String[] args) {

@@ -1,7 +1,7 @@
 package org.newrain.base.copy;
 
 /**
- * Created by zzqno on 2017-3-6.
+ * Created by newrain on 2017-3-6.
  */
 public class CopyExample implements Cloneable {
 
