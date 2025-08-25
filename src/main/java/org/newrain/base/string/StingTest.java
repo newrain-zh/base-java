@@ -1,7 +1,7 @@
 package org.newrain.base.string;
 
 /**
- * Created by zzqno on 2017-5-15.
+ * Created by newrain on 2017-5-15.
  */
 public class StingTest {
 
