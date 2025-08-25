@@ -1,0 +1,3 @@
+# 服务名称=实现类全限定名
+email=org.newrain.spi.EmailService
+sms=org.newrain.spi.SmsService
