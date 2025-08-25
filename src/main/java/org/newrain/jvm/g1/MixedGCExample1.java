@@ -1,4 +1,4 @@
-package org.newrain.g1;
+package org.newrain.jvm.g1;
 
 import java.util.ArrayList;
 import java.util.List;
