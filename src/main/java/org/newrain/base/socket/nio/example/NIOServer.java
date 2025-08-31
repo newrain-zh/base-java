@@ -1,4 +1,6 @@
-package org.newrain.base.socket.tcp;
+package org.newrain.base.socket.nio.example;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,6 +16,7 @@ import java.util.Iterator;
  *
  * @author -琴兽-
  */
+@Slf4j
 public class NIOServer {
     // 通道管理器
     private Selector selector;
@@ -48,33 +51,24 @@ public class NIOServer {
         // 轮询访问selector
         while (true) {
             // 当注册的事件到达时，方法返回；否则,该方法会一直阻塞
-            selector.select();
+            int select = selector.select();
+            if (select == 0){
+                continue;
+            }
             // 获得selector中选中的项的迭代器，选中的项为注册的事件
             Iterator<?> ite = this.selector.selectedKeys().iterator();
             while (ite.hasNext()) {
                 SelectionKey key = (SelectionKey) ite.next();
+                // 处理“连接就绪”事件 客户端发起的连接
+                if (key.isAcceptable()) {
+                    handlerAccept(key);
+                    // 获得了可读的事件 客户端发送数据
+                } else if (key.isReadable()) {
+                    handlerReader(key);
+                }
                 // 删除已选的key,以防重复处理
                 ite.remove();
-
-                handler(key);
             }
-        }
-    }
-
-    /**
-     * 处理请求
-     *
-     * @param key
-     * @throws IOException
-     */
-    public void handler(SelectionKey key) throws IOException {
-
-        // 客户端请求连接事件
-        if (key.isAcceptable()) {
-            handlerAccept(key);
-            // 获得了可读的事件
-        } else if (key.isReadable()) {
-            handelerRead(key);
         }
     }
 
@@ -103,7 +97,7 @@ public class NIOServer {
      * @param key
      * @throws IOException
      */
-    public void handelerRead(SelectionKey key) throws IOException {
+    public void handlerReader(SelectionKey key) throws IOException {
         // 服务器可读取消息:得到事件发生的Socket通道
         SocketChannel channel = (SocketChannel) key.channel();
         // 创建读取的缓冲区
@@ -112,13 +106,13 @@ public class NIOServer {
         if (read > 0) {
             byte[] data = buffer.array();
             String msg = new String(data).trim();
-            System.out.println("服务端收到信息：" + msg);
+            log.info("服务端收到信息：{}", msg);
             //回写数据
             ByteBuffer outBuffer = ByteBuffer.wrap("好的".getBytes());
             // 将消息回送给客户端
             channel.write(outBuffer);
         } else {
-            System.out.println("客户端关闭");
+            log.info("客户端关闭");
             key.cancel();
         }
     }
