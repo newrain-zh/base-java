@@ -34,13 +34,17 @@ public class NIOInputClient {
             socketChannel.connect(new java.net.InetSocketAddress(HOST, PORT));
             log.info("准备连接到服务端");
             socketChannel.register(selector, SelectionKey.OP_CONNECT); // 注册连接就绪事件
-            for (; ; ) {
-                selector.select();
+            for (; ;) {
+                int select = selector.select(1000L);
+                if (select == 0) {
+                    continue;
+                }
                 Set<SelectionKey>      selectionKeys = selector.selectedKeys();
                 Iterator<SelectionKey> keyIterator   = selectionKeys.iterator();
                 while (keyIterator.hasNext()) {
+
                     SelectionKey selectionKey = keyIterator.next();
-                    log.info("selectionKey:{}", selectionKey);
+//                    log.info("selectionKey:{}", selectionKey);
                     keyIterator.remove();
                     if (selectionKey.isConnectable()) {
                         handleConnect(selectionKey, selector);
@@ -48,9 +52,10 @@ public class NIOInputClient {
                     if (selectionKey.isReadable()) {
                         handleServerRead(selectionKey, selector); // 处理服务端响应
                     }
-                    if (selectionKey.isWritable()) {
+                    if (!msgQueue.isEmpty() && selectionKey.isWritable()) {
                         handleWrite(socketChannel, selector, selectionKey);
                     }
+
                 }
             }
         } catch (Exception e) {
@@ -95,18 +100,17 @@ public class NIOInputClient {
     /**
      * 处理写事件（发送消息到服务端）
      */
-    private static void handleWrite(SocketChannel socketChannel,
-                                    Selector selector,
-                                    SelectionKey key) throws IOException {
+    private static void handleWrite(SocketChannel socketChannel, Selector selector, SelectionKey key) throws IOException {
         ByteBuffer buffer = (ByteBuffer) key.attachment();
         // 检查是否有消息需要发送
         String message;
         while ((message = msgQueue.poll()) != null) {
             // 将消息写入缓冲区并发送
-            buffer.clear();
+
             buffer.put(message.getBytes(StandardCharsets.UTF_8));
             buffer.flip();
             socketChannel.write(buffer);
+            buffer.clear();
             log.info("已发送：{}", message);
             socketChannel.register(selector, SelectionKey.OP_WRITE, ByteBuffer.allocate(1024));
         }
