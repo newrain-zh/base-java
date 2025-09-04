@@ -27,6 +27,8 @@ public class ServiceLoader<S> {
     // 缓存服务名称与类的映射
     private final Map<String, Class<? extends S>> serviceClasses   = new ConcurrentHashMap<>();
 
+    private static MessageService message;
+
     private ServiceLoader(Class<S> service, ClassLoader classLoader) {
         this.service     = service;
         this.classLoader = classLoader;
